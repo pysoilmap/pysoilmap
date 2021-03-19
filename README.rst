@@ -21,6 +21,10 @@ Features so far:
 
 - (none)
 
+
+Roadmap
+~~~~~~~
+
 In the future, we plan on working the following features:
 
 - common interface for several machine learning models for linear
@@ -29,6 +33,8 @@ In the future, we plan on working the following features:
   aspect, radiation angle, ...)
 - sampling points from shapefile datasets
 - custom non-stationary GP kernels for DSM
+- algorithms for experimental design (DOE)
+- 3D terrain survey
 - ...?
 
 
