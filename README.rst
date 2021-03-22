@@ -31,7 +31,9 @@ In the future, we plan on working the following features:
   regression, kriging, regression-kriging, random forests, ...
 - computation of several topographic covariates from DEM (curvatures, slope,
   aspect, radiation angle, ...)
-- sampling points from shapefile datasets
+- plotting of raster and vector data
+- reprojection, resampling
+- sampling points from vector datasets
 - custom non-stationary GP kernels for DSM
 - algorithms for experimental design (DOE)
 - 3D terrain survey
