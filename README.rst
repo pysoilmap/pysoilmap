@@ -43,11 +43,13 @@ In the future, we plan on working the following features:
 Links
 ~~~~~
 
-- Documentation (TBD)
-- Tests (TBD)
+- Documentation_
+- Tests_
 - `Source Code`_
 - License_
 
+.. _Documentation: https://pysoilmap.readthedocs.io/en/latest/
+.. _Tests: https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml
 .. _Source Code: https://github.com/pysoilmap/pysoilmap
 .. _License: https://github.com/pysoilmap/pysoilmap/blob/master/UNLICENSE
 
