@@ -1,7 +1,7 @@
 pysoilmap
 =========
 
-|Version| |License| |Docs|
+|Version| |License| |Docs| |Tests|
 
 Tools for performing Digital Soil Mapping (DSM) with python.
 
@@ -82,3 +82,7 @@ TBD
 .. |Docs| image::       https://readthedocs.org/projects/pysoilmap/badge/?version=latest
    :target:             https://pysoilmap.readthedocs.io/en/latest/?badge=latest
    :alt:                Documentation
+
+.. |Tests| image::      https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml/badge.svg
+   :target:             https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml
+   :alt:                Test status
