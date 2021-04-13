@@ -19,6 +19,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx_automodapi.automodapi',
     'sphinx_autodoc_typehints',
+    'sphinx_click',
 ]
 
 add_module_names = False

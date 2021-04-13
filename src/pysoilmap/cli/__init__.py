@@ -16,33 +16,38 @@ See 'pysoilmap help <command>' for more information on a specific command.
 
 import pysoilmap
 
-from docopt import docopt
+import click
 from importlib import import_module
 
 
-subcommands = [
-    'help',
-    'shapefile',
-]
+class SubCommands(click.MultiCommand):
+
+    def __init__(self, *args, package, commands, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._package = package
+        self._commands = commands
+
+    def list_commands(self, ctx):
+        return self._commands
+
+    def get_command(self, ctx, name):
+        if name in self._commands:
+            module = import_module(self._package + '.' + name)
+            return module.main
 
 
-def main(args=None):
-    """
-    Execute pysoilmap command. See above for usage options.
-    """
-    opts = docopt(
-        __doc__,
-        args,
-        version='pysoilmap ' + pysoilmap.__version__,
-        options_first=True)
-
-    command = opts['<command>']
-
-    if command in subcommands:
-        module = import_module('pysoilmap.cli.' + command)
-        exitcode = module.main(opts['<args>'])
-        return exitcode
-
-    else:
-        print("Unknown subcommand: {!r}!".format(command))
-        return 1
+@click.command(
+    'pysoilmap',
+    cls=SubCommands,
+    package='pysoilmap.cli',
+    commands=[
+        'shapefile',
+        'help',
+    ],
+)
+@click.version_option(
+    version=pysoilmap.__version__,
+    prog_name='pysoilmap',
+)
+def main():
+    pass

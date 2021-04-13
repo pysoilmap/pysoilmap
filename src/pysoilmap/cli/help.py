@@ -1,32 +1,14 @@
 """
 Show help on a pysoilmap command or show a list of all available commands.
-
-Usage:
-    pysoilmap help [<command>]
-
-
-See 'pysoilmap help' for a list of all available commands.
 """
 
-from docopt import docopt
+import pysoilmap.cli as cli
 
-from importlib import import_module
-import sys
+import click
 
 
-def main(args=None):
+@click.command('help', context_settings={'ignore_unknown_options': True})
+@click.argument('command', nargs=-1)
+def main(command):
     """Show pysoilmap command line help."""
-    if args is None:
-        args = sys.argv[1:]
-
-    opts = docopt(__doc__, ['help'] + args)
-
-    if opts['<command>']:
-        modname = 'pysoilmap.cli.' + opts['<command>']
-    else:
-        modname = 'pysoilmap.cli'
-
-    module = import_module(modname)
-    usage = module.__doc__
-    print(usage)
-    return 0
+    cli.main(command + ('--help',))
