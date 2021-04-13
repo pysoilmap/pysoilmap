@@ -2,13 +2,12 @@
 Perform operations on shapefiles.
 
 Usage:
-    pysoilmap shapefile <input> [options] [--inplace|-o FILE]
+    pysoilmap shapefile info <input>
+    pysoilmap shapefile repair <input> [-o FILE|--inplace]
+    pysoilmap shapefile buffer <input> <distance> [-o FILE|--inplace]
 
 Options:
    -o FILE, --output FILE       Output file
-   --repair                     Attempt to repair broken geometries
-                                (no guarantees)
-   --buffer DISTANCE            Create buffer around each shape
    --inplace                    Use input file as output file
 """
 
@@ -29,13 +28,15 @@ def main(args=None):
 
     in_fname = opts['<input>']
     out_fname = opts['--output']
-    if opts['--inplace']:
-        out_fname = in_fname
 
-    if not out_fname:
-        print("Missing output file name. You must specify either '--output' "
-              "or '--inplace'!")
-        return 1
+    if opts['repair'] or opts['buffer']:
+        if opts['--inplace']:
+            out_fname = in_fname
+
+        if not out_fname:
+            print("Missing output file name. You must specify either "
+                  "'--output' or '--inplace'!")
+            return 1
 
     print("Reading shapefile: {}".format(in_fname))
     try:
@@ -44,9 +45,12 @@ def main(args=None):
         print(e)
         return 1
 
-    if opts['--buffer'] is not None:
+    if opts['info']:
+        gdf.info(verbose=True, show_counts=True)
+
+    elif opts['buffer']:
         try:
-            distance = float(opts['--buffer'])
+            distance = float(opts['<distance>'])
         except ValueError:
             print("Expected number for '--buffer DISTANCE', got: {!r}".format(
                 opts['--buffer']
@@ -55,10 +59,11 @@ def main(args=None):
         print("Buffering geometries…")
         gdf = shapeops.buffer(gdf, distance)
 
-    if opts['--repair']:
+    elif opts['repair']:
         print("Repairing geometries…")
         gdf = shapeops.repair(gdf)
 
-    print("Writing to: {}".format(out_fname))
-    gdf.to_file(out_fname)
+    if out_fname:
+        print("Writing to: {}".format(out_fname))
+        gdf.to_file(out_fname)
     return 0
