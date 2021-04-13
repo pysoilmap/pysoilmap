@@ -22,7 +22,7 @@ import sys
 
 
 def main(args=None):
-    """Show pysoilmap command line help."""
+    """Execute shapefile command."""
     if args is None:
         args = sys.argv[1:]
 
