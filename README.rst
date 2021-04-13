@@ -44,11 +44,13 @@ Links
 ~~~~~
 
 - Documentation_
-- Tests_
+- Releases_
 - `Source Code`_
 - License_
+- Tests_
 
 .. _Documentation: https://pysoilmap.readthedocs.io/en/latest/
+.. _Releases: https://pypi.python.org/pypi/pysoilmap
 .. _Tests: https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml
 .. _Source Code: https://github.com/pysoilmap/pysoilmap
 .. _License: https://github.com/pysoilmap/pysoilmap/blob/master/UNLICENSE
@@ -75,7 +77,7 @@ TBD
 
 .. |Version| image::    https://img.shields.io/pypi/v/pysoilmap.svg
    :target:             https://pypi.python.org/pypi/pysoilmap
-   :alt:                Version
+   :alt:                Latest Release
 
 .. |License| image::    https://img.shields.io/pypi/l/pysoilmap.svg
    :target:             https://github.com/pysoilmap/pysoilmap/blob/master/UNLICENSE
