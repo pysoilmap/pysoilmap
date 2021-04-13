@@ -26,7 +26,8 @@ jobs:
           python-version: ${{ matrix.python }}
 
       - run: pip install -e .[dev]
-      - run: flake8 src
+      - run: flake8 src tests
+      - run: pytest tests
 
   docs:
     name: Documentation

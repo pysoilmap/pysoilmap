@@ -32,7 +32,17 @@ release = pysoilmap.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'sphinx.ext.viewcode',
+    'sphinx_automodapi.automodapi',
+    'sphinx_autodoc_typehints',
 ]
+
+add_module_names = False
+automodapi_toctreedirnm = "automod"
+automodapi_writereprocessed = False
+automodsumm_inherited_members = True
+typehints_fully_qualified = False
+typehints_document_rtype = True
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
