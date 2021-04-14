@@ -122,3 +122,19 @@ def set_crs(gdf, crs):
     """Assign new CRS without reprojection."""
     print("Assigning CRS: {}".format(crs))
     return gdf.set_crs(crs)
+
+
+@main.command()
+@click.argument('shape', metavar='<shape>')
+@returns_gdf
+@needs_gdf
+def clip(gdf, shape):
+    """
+    Clip GeoDataFrame to specified shape. The shape can be given as bounds,
+    WKT, or .wkt or .wkb file.
+    """
+    try:
+        shape = shapeops.read_shape(shape)
+    except ValueError as e:
+        raise click.ClickException(str(e))
+    return shapeops.clip(gdf, shape)

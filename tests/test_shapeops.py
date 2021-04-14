@@ -5,6 +5,9 @@ import pytest
 import shapely
 from numpy.testing import assert_allclose
 
+import os
+import tempfile
+
 
 # TODO checks:
 # - repair(invalid shapes)
@@ -48,3 +51,45 @@ def test_buffer_rectangle(distance):
     assert_allclose(out.bounds.miny, gdf.bounds.miny - distance)
     assert_allclose(out.bounds.maxx, gdf.bounds.maxx + distance)
     assert_allclose(out.bounds.maxy, gdf.bounds.maxy + distance)
+
+
+@pytest.mark.parametrize('clip_bounds,expected_bounds', [
+    ((0, 0, 4, 4), [(0, 1, 2, 3), (3, 1, 4, 2)]),
+    ((0, 1, 2, 3), [(0, 1, 2, 3)]),
+    ((3, 1, 4, 2), [(3, 1, 4, 2)]),
+    ((1, 1.5, 3.5, 2.5), [(1, 1.5, 2, 2.5), (3, 1.5, 3.5, 2)]),
+])
+def test_clip_rectangle(clip_bounds, expected_bounds):
+    gdf = gpd.GeoDataFrame(geometry=[
+        shapely.geometry.box(0, 1, 2, 3),
+        shapely.geometry.box(3, 1, 4, 2),
+    ])
+    out = shapeops.clip(gdf, shapely.geometry.box(*clip_bounds))
+    assert_allclose(out.bounds.values, expected_bounds)
+
+
+def test_read_shape():
+    shape = shapely.geometry.box(0, 1, 2, 3)
+    assert shape.equals(shapeops.read_shape('0, 1, 2, 3'))
+    assert shape.equals(shapeops.read_shape('0,1,2,+3'))
+    assert shape.equals(shapeops.read_shape(shape.wkt))
+    assert not shape.equals(shapeops.read_shape('0,-1,2,+3'))
+
+    with tempfile.TemporaryDirectory() as folder:
+        filename = os.path.join(folder, 'shape.wkt')
+        shapeops.write_wkt(filename, shape)
+        assert shape.equals(shapeops.read_shape(filename))
+
+    with tempfile.TemporaryDirectory() as folder:
+        filename = os.path.join(folder, 'shape.wkb')
+        shapeops.write_wkb(filename, shape)
+        assert shape.equals(shapeops.read_shape(filename))
+
+    with pytest.raises(ValueError):
+        shapeops.read_shape('')
+    with pytest.raises(ValueError):
+        shapeops.read_shape('0,1,2')
+    with pytest.raises(ValueError):
+        shapeops.read_shape('(0,1,2)')
+    with pytest.raises(ValueError):
+        shapeops.read_shape('this_file_shouldnt_exist.wkt')
