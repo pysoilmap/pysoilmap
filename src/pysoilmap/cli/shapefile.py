@@ -102,3 +102,23 @@ def repair(gdf):
     """Attempt to fix broken geometries in the given shapefile."""
     print("Repairing geometries…")
     return shapeops.repair(gdf)
+
+
+@main.command()
+@click.argument('crs', metavar='<crs>')
+@returns_gdf
+@needs_gdf
+def to_crs(gdf, crs):
+    """Reproject to a new CRS."""
+    print("Reprojecting to CRS: {}".format(crs))
+    return gdf.to_crs(crs)
+
+
+@main.command()
+@click.argument('crs', metavar='<crs>')
+@returns_gdf
+@needs_gdf
+def set_crs(gdf, crs):
+    """Assign new CRS without reprojection."""
+    print("Assigning CRS: {}".format(crs))
+    return gdf.set_crs(crs)
