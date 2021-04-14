@@ -15,8 +15,8 @@ def repair(gdf: GeoDataFrame) -> GeoDataFrame:
     mileage may vary.
     """
     return gdf.set_geometry([
-        shapely.ops.unary_union([shape.buffer(0.0)])
-        for shape in gdf.geometry
+        shapely.ops.unary_union([shape])
+        for shape in gdf.geometry.buffer(0.0)
     ])
 
 
@@ -32,7 +32,5 @@ def buffer(
     This can be used as a trick to repair some types of broken geometries in
     shapefiles.
     """
-    return gdf.set_geometry([
-        shape.buffer(distance, *args, **kwargs)
-        for shape in gdf.geometry
-    ])
+    return gdf.set_geometry(
+        gdf.geometry.buffer(distance))
