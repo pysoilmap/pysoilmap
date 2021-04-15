@@ -5,7 +5,6 @@ Operations on GeoDataFrame.
 import numpy as np
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon, MultiPoint
-from shapely.geometry.base import BaseGeometry
 import shapely
 
 import os
@@ -55,7 +54,7 @@ def buffer(
         gdf.geometry.buffer(distance))
 
 
-def read_shape(spec: str) -> BaseGeometry:
+def read_shape(spec: str) -> Polygon:
     """
     Parse shape from WKT, or bounds, or .wkt or .wkb file.
 
@@ -90,31 +89,31 @@ def read_shape(spec: str) -> BaseGeometry:
     raise ValueError("Unknown shape definition: {!r}".format(spec))
 
 
-def read_wkt(filename: str) -> BaseGeometry:
+def read_wkt(filename: str) -> Polygon:
     """Read .wkt file."""
     with open(filename, 'rt') as f:
         return shapely.wkt.load(f)
 
 
-def read_wkb(filename: str) -> BaseGeometry:
+def read_wkb(filename: str) -> Polygon:
     """Read .wkb file."""
     with open(filename, 'rb') as f:
         return shapely.wkb.load(f)
 
 
-def write_wkt(filename: str, shape: BaseGeometry):
+def write_wkt(filename: str, shape: Polygon):
     """Read .wkt file."""
     with open(filename, 'wt') as f:
         shapely.wkt.dump(shape, f)
 
 
-def write_wkb(filename: str, shape: BaseGeometry):
+def write_wkb(filename: str, shape: Polygon):
     """Read .wkb file."""
     with open(filename, 'wb') as f:
         shapely.wkb.dump(shape, f)
 
 
-def is_point_in_polygon(polygon: Polygon, points: np.array) -> np.array:
+def is_point_in_polygon(polygon: Polygon, points: np.ndarray) -> np.ndarray:
     """
     Check which points are contained in a general polygon.
 
@@ -125,7 +124,6 @@ def is_point_in_polygon(polygon: Polygon, points: np.array) -> np.array:
     :param polygon: a triangle
     :param points: an ``(N, 2)`` coordinate array.
     :return: a boolean ``(N,)`` array
-    :rtype: np.array
     """
     # In general, we could also use any other convex partitioning algorithm
     # combined with is_point_in_convex_polygon, but I couldn't find any such
@@ -137,7 +135,10 @@ def is_point_in_polygon(polygon: Polygon, points: np.array) -> np.array:
     ], axis=0)
 
 
-def is_point_in_convex_polygon(polygon: Polygon, points: np.array) -> np.array:
+def is_point_in_convex_polygon(
+        polygon: Polygon,
+        points: np.ndarray
+        ) -> np.ndarray:
     """
     Check which points are contained in a convex polygon.
 
@@ -148,7 +149,6 @@ def is_point_in_convex_polygon(polygon: Polygon, points: np.array) -> np.array:
     :param polygon: a triangle
     :param points: an ``(N, 2)`` coordinate array.
     :return: a boolean ``(N,)`` array
-    :rtype: np.array
     """
     mask = is_point_in_bounds(polygon.bounds, points)
     points = points[mask]
@@ -170,14 +170,13 @@ def is_point_in_convex_polygon(polygon: Polygon, points: np.array) -> np.array:
     return mask
 
 
-def is_point_in_triangle(polygon: Polygon, points: np.array) -> np.array:
+def is_point_in_triangle(polygon: Polygon, points: np.ndarray) -> np.ndarray:
     """
     Check which points are contained in a triangle.
 
     :param polygon: a triangle
     :param points: an ``(N, 2)`` coordinate array.
     :return: a boolean ``(N,)`` array
-    :rtype: np.array
     """
     corners = np.array(polygon.boundary)[:-1]
     if corners.shape[0] != 3:
@@ -197,14 +196,13 @@ def is_point_in_triangle(polygon: Polygon, points: np.array) -> np.array:
     )
 
 
-def is_point_in_bounds(bounds: tuple, points: np.array) -> np.array:
+def is_point_in_bounds(bounds: tuple, points: np.ndarray) -> np.ndarray:
     """
     Check which points are contained in the given bounds.
 
     :param bounds: a tuple ``(minx, miny, maxx, maxy)``
     :param points: an ``(N, 2)`` coordinate array.
     :return: a boolean ``(N,)`` array
-    :rtype: np.array
     """
     return np.all(
         (points >= bounds[:2]) &
@@ -212,7 +210,7 @@ def is_point_in_bounds(bounds: tuple, points: np.array) -> np.array:
         axis=-1)
 
 
-def find_polygon_at_point(gdf: GeoDataFrame, points: np.array) -> np.array:
+def find_polygon_at_point(gdf: GeoDataFrame, points: np.ndarray) -> np.ndarray:
     """
     For each point in ``points`` look up the index of a containing polygon in
     a GeoDataFrame, or ``-1`` if none is found.
@@ -220,7 +218,6 @@ def find_polygon_at_point(gdf: GeoDataFrame, points: np.array) -> np.array:
     :param gdf: a GeoDataFrame whose geometry is queried against
     :param points: an ``(N, 2)`` coordinate array.
     :return: an integer ``(N,)`` array
-    :rtype: np.array
     """
     # This seems to be slightly slower than using shapely.strtree.STRtree,
     # but it is a bit more natural and simpler.
