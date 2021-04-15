@@ -5,12 +5,13 @@ Operations on GeoDataFrame.
 import numpy as np
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
+from shapely.geometry.base import BaseGeometry
 import shapely
 
 import os
 
 
-def clip(gdf: GeoDataFrame, shape: Polygon):
+def clip(gdf: GeoDataFrame, shape: Polygon) -> GeoDataFrame:
     """
     Clip a GeoDataFrame to the specified area.
 
@@ -54,8 +55,13 @@ def buffer(
         gdf.geometry.buffer(distance))
 
 
-def read_shape(spec):
-    """Parse shape from WKT, or bounds, or .wkt or .wkb file."""
+def read_shape(spec: str) -> BaseGeometry:
+    """
+    Parse shape from WKT, or bounds, or .wkt or .wkb file.
+
+    :param spec: a string specifying either 'minx,miny,maxx,maxy', or a WKT
+                 text, or a filename pointing to a .wkt or .wkb file.
+    """
     if os.path.exists(spec):
         ext = os.path.splitext(spec)[1].lower()
         if ext == '.wkt':
@@ -81,36 +87,34 @@ def read_shape(spec):
             return shapely.wkt.loads(spec)
         except shapely.errors.ReadingError:
             pass
-    elif isinstance(spec, bytes):
-        return shapely.wkb.loads(spec)
     raise ValueError("Unknown shape definition: {!r}".format(spec))
 
 
-def read_wkt(filename):
+def read_wkt(filename: str) -> BaseGeometry:
     """Read .wkt file."""
     with open(filename, 'rt') as f:
         return shapely.wkt.load(f)
 
 
-def read_wkb(filename):
+def read_wkb(filename: str) -> BaseGeometry:
     """Read .wkb file."""
     with open(filename, 'rb') as f:
         return shapely.wkb.load(f)
 
 
-def write_wkt(filename, shape):
+def write_wkt(filename: str, shape: BaseGeometry):
     """Read .wkt file."""
     with open(filename, 'wt') as f:
-        return shapely.wkt.dump(shape, f)
+        shapely.wkt.dump(shape, f)
 
 
-def write_wkb(filename, shape):
+def write_wkb(filename: str, shape: BaseGeometry):
     """Read .wkb file."""
     with open(filename, 'wb') as f:
-        return shapely.wkb.dump(shape, f)
+        shapely.wkb.dump(shape, f)
 
 
-def is_point_in_polygon(polygon: Polygon, points: np.array):
+def is_point_in_polygon(polygon: Polygon, points: np.array) -> np.array:
     """
     Check which points are contained in a general polygon.
 
@@ -133,7 +137,7 @@ def is_point_in_polygon(polygon: Polygon, points: np.array):
     ], axis=0)
 
 
-def is_point_in_convex_polygon(polygon: Polygon, points: np.array):
+def is_point_in_convex_polygon(polygon: Polygon, points: np.array) -> np.array:
     """
     Check which points are contained in a convex polygon.
 
@@ -166,7 +170,7 @@ def is_point_in_convex_polygon(polygon: Polygon, points: np.array):
     return mask
 
 
-def is_point_in_triangle(polygon: Polygon, points: np.array):
+def is_point_in_triangle(polygon: Polygon, points: np.array) -> np.array:
     """
     Check which points are contained in a triangle.
 
@@ -193,7 +197,7 @@ def is_point_in_triangle(polygon: Polygon, points: np.array):
     )
 
 
-def is_point_in_bounds(bounds: tuple, points: np.array):
+def is_point_in_bounds(bounds: tuple, points: np.array) -> np.array:
     """
     Check which points are contained in the given bounds.
 
