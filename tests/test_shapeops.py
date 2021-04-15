@@ -4,7 +4,7 @@ import geopandas as gpd
 import numpy as np
 import pytest
 import shapely
-from numpy.testing import assert_allclose
+from numpy.testing import assert_allclose, assert_equal
 
 import os
 import tempfile
@@ -147,3 +147,34 @@ def test_read_write_wkb(shape):
         filename = os.path.join(folder, 'shape.wkt')
         shapeops.write_wkt(filename, shape)
         assert shape.equals(shapeops.read_wkt(filename))
+
+
+def test_find_polygon_at_point():
+    gdf = gpd.GeoDataFrame(geometry=[
+        shapely.geometry.box(0, 0, 1, 1)
+    ])
+    points = np.dstack(np.meshgrid(
+        np.linspace(0, 2, 100),
+        np.linspace(0, 2, 100))).reshape(-1, 2)
+    out = shapeops.find_polygon_at_point(gdf, points)
+    pip = shapeops.is_point_in_convex_polygon(
+        gdf.geometry.iloc[0], points)
+    assert set(np.unique(out)) <= {-1, 0}
+    assert_equal(out == 0, pip)
+
+    gdf = gpd.GeoDataFrame(geometry=[
+        shapely.geometry.box(0, 1, 2, 3),
+        shapely.geometry.box(3, 1, 4, 2),
+    ])
+    points = np.dstack(np.meshgrid(
+        np.linspace(0, 4, 100),
+        np.linspace(0, 3, 100))).reshape(-1, 2)
+    out = shapeops.find_polygon_at_point(gdf, points)
+    pip0 = shapeops.is_point_in_convex_polygon(
+        gdf.geometry.iloc[0], points)
+    pip1 = shapeops.is_point_in_convex_polygon(
+        gdf.geometry.iloc[1], points)
+    assert set(np.unique(out)) <= {-1, 0, 1}
+    assert_equal(out >= 0, pip0 | pip1)
+    assert_equal(pip0[out == 0], True)
+    assert_equal(pip1[out == 1], True)

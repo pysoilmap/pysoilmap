@@ -4,7 +4,7 @@ Operations on GeoDataFrame.
 
 import numpy as np
 from geopandas import GeoDataFrame
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, MultiPoint
 from shapely.geometry.base import BaseGeometry
 import shapely
 
@@ -210,3 +210,25 @@ def is_point_in_bounds(bounds: tuple, points: np.array) -> np.array:
         (points >= bounds[:2]) &
         (points <= bounds[2:]),
         axis=-1)
+
+
+def find_polygon_at_point(gdf: GeoDataFrame, points: np.array) -> np.array:
+    """
+    For each point in ``points`` look up the index of a containing polygon in
+    a GeoDataFrame, or ``-1`` if none is found.
+
+    :param gdf: a GeoDataFrame whose geometry is queried against
+    :param points: an ``(N, 2)`` coordinate array.
+    :return: an integer ``(N,)`` array
+    :rtype: np.array
+    """
+    # This seems to be slightly slower than using shapely.strtree.STRtree,
+    # but it is a bit more natural and simpler.
+    index = gdf.sindex
+    shapes = gdf.geometry.iloc
+    return np.array([
+        next((
+            i for i in index.query(p)
+            if shapes[i].intersects(p)), -1)
+        for p in MultiPoint(points[:, :2])
+    ])
