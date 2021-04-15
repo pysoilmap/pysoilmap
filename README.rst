@@ -53,7 +53,7 @@ Links
 .. _Releases: https://pypi.python.org/pypi/pysoilmap
 .. _Tests: https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml
 .. _Source Code: https://github.com/pysoilmap/pysoilmap
-.. _License: https://github.com/pysoilmap/pysoilmap/blob/master/UNLICENSE
+.. _License: https://github.com/pysoilmap/pysoilmap/blob/main/UNLICENSE
 
 
 Installation
@@ -80,7 +80,7 @@ TBD
    :alt:                Latest Release
 
 .. |License| image::    https://img.shields.io/pypi/l/pysoilmap.svg
-   :target:             https://github.com/pysoilmap/pysoilmap/blob/master/UNLICENSE
+   :target:             https://github.com/pysoilmap/pysoilmap/blob/main/UNLICENSE
    :alt:                License: Unlicense
 
 .. |Docs| image::       https://readthedocs.org/projects/pysoilmap/badge/?version=latest
@@ -91,6 +91,6 @@ TBD
    :target:             https://github.com/pysoilmap/pysoilmap/actions/workflows/main.yml
    :alt:                Test status
 
-.. |Coverage| image::   https://coveralls.io/repos/pysoilmap/pysoilmap/badge.svg?branch=master
+.. |Coverage| image::   https://coveralls.io/repos/pysoilmap/pysoilmap/badge.svg?branch=main
    :target:             https://coveralls.io/r/pysoilmap/pysoilmap
    :alt:                Coverage
