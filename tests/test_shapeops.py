@@ -1,6 +1,7 @@
 import pysoilmap.shapeops as shapeops
 
 import geopandas as gpd
+import numpy as np
 import pytest
 import shapely
 from numpy.testing import assert_allclose
@@ -93,3 +94,34 @@ def test_read_shape():
         shapeops.read_shape('(0,1,2)')
     with pytest.raises(ValueError):
         shapeops.read_shape('this_file_shouldnt_exist.wkt')
+
+
+def test_is_point_in_bounds():
+    shape = shapely.geometry.box(0, 0, 1, 1)
+    points = np.dstack(np.meshgrid(
+        np.linspace(0, 2, 100),
+        np.linspace(0, 2, 100)))
+
+    mask = shapeops.is_point_in_bounds(shape.bounds, points)
+    assert (points[mask] <= (1, 1)).all()
+    assert (points[~mask] >= (1, 1)).any(axis=-1).all()
+
+
+def test_is_point_in_polygon():
+    shape = shapely.geometry.box(0, 0, 1, 1)
+    points = np.dstack(np.meshgrid(
+        np.linspace(0, 2, 100),
+        np.linspace(0, 2, 100)))
+
+    mask = shapeops.is_point_in_polygon(shape, points)
+    assert (mask == shapeops.is_point_in_bounds(shape.bounds, points)).all()
+
+
+def test_is_point_in_convex_polygon():
+    shape = shapely.geometry.box(0, 0, 1, 1)
+    points = np.dstack(np.meshgrid(
+        np.linspace(0, 2, 100),
+        np.linspace(0, 2, 100)))
+
+    mask = shapeops.is_point_in_convex_polygon(shape, points)
+    assert (mask == shapeops.is_point_in_bounds(shape.bounds, points)).all()

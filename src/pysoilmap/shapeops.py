@@ -2,6 +2,7 @@
 Operations on GeoDataFrame.
 """
 
+import numpy as np
 from geopandas import GeoDataFrame
 from shapely.geometry import Polygon
 import shapely
@@ -107,3 +108,101 @@ def write_wkb(filename, shape):
     """Read .wkb file."""
     with open(filename, 'wb') as f:
         return shapely.wkb.dump(shape, f)
+
+
+def is_point_in_polygon(polygon: Polygon, points: np.array):
+    """
+    Check which points are contained in a general polygon.
+
+    This may be more efficient than
+    ``polygon.intersection(MultiPoint(points))`` if the polygon's Delaunay
+    triangulation consists of only few partitions.
+
+    :param polygon: a triangle
+    :param points: an ``(N, 2)`` coordinate array.
+    :return: a boolean ``(N,)`` array
+    :rtype: np.array
+    """
+    # In general, we could also use any other convex partitioning algorithm
+    # combined with is_point_in_convex_polygon, but I couldn't find any such
+    # implementations in shapely.
+    triangles = shapely.ops.triangulate(polygon)
+    return np.any([
+        is_point_in_triangle(triangle, points)
+        for triangle in triangles
+    ], axis=0)
+
+
+def is_point_in_convex_polygon(polygon: Polygon, points: np.array):
+    """
+    Check which points are contained in a convex polygon.
+
+    This may be more efficient than
+    ``polygon.intersection(MultiPoint(points))`` if the polygon has a low
+    number of edges.
+
+    :param polygon: a triangle
+    :param points: an ``(N, 2)`` coordinate array.
+    :return: a boolean ``(N,)`` array
+    :rtype: np.array
+    """
+    mask = is_point_in_bounds(polygon.bounds, points)
+    points = points[mask]
+
+    centroid = np.array(polygon.centroid)
+    xmin, ymin, xmax, ymax = polygon.bounds
+    scale = np.array([xmax - xmin, ymax - ymin])
+    points = (np.array(points)[None, :, :] - centroid) / scale
+    coords = (np.array(polygon.boundary)[:, None, :] - centroid) / scale
+    cross = np.cross(
+        coords[1:] - coords[:-1],
+        points - coords[:-1])
+
+    result = (
+        np.all(cross <= 0, axis=0) |
+        np.all(cross >= 0, axis=0))
+
+    mask[mask] = result
+    return mask
+
+
+def is_point_in_triangle(polygon: Polygon, points: np.array):
+    """
+    Check which points are contained in a triangle.
+
+    :param polygon: a triangle
+    :param points: an ``(N, 2)`` coordinate array.
+    :return: a boolean ``(N,)`` array
+    :rtype: np.array
+    """
+    corners = np.array(polygon.boundary)[:-1]
+    if corners.shape[0] != 3:
+        raise ValueError(
+            "Expected triangle, got polygon with {} boundary points"
+            .format(corners.shape[0]))
+    A, B, C = corners
+    AP = np.array(points) - A
+    AB = B - A
+    AC = C - A
+    v_x = np.cross(AP, AC)
+    v_y = np.cross(AB, AP)
+    v_z = np.cross(AB, AC)
+    return (
+        ((v_x >= 0) & (v_y >= 0) & (v_x + v_y <= v_z)) |
+        ((v_x <= 0) & (v_y <= 0) & (v_x + v_y >= v_z))
+    )
+
+
+def is_point_in_bounds(bounds: tuple, points: np.array):
+    """
+    Check which points are contained in the given bounds.
+
+    :param bounds: a tuple ``(minx, miny, maxx, maxy)``
+    :param points: an ``(N, 2)`` coordinate array.
+    :return: a boolean ``(N,)`` array
+    :rtype: np.array
+    """
+    return np.all(
+        (points >= bounds[:2]) &
+        (points <= bounds[2:]),
+        axis=-1)
