@@ -25,12 +25,12 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - run: pip install -U pip wheel flake8 twine pytest coverage
+      - run: pip install -U pip wheel flake8 twine pytest coverage coveralls
       - run: python setup.py sdist bdist_wheel
       - run: twine check dist/*
       - run: pip install dist/*.whl
       - run: flake8 src tests
-      - run: coverage run --source=pysoilmap -m pytest -v tests
+      - run: coverage run --source=pysoilmap -p -m pytest -v tests
 
       - uses: actions/upload-artifact@v2
         with:
@@ -40,10 +40,11 @@ jobs:
             matrix.os == 'ubuntu-latest' &&
             matrix.python == '3.8'
 
-      - run: bash <(curl -s https://codecov.io/bash)
-        if: env.CODECOV_TOKEN != ''
+      - run: coverage combine
+      - run: coveralls
+        if: env.COVERALLS_REPO_TOKEN != ''
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
   docs:
     name: Documentation
