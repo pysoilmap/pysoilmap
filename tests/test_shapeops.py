@@ -125,3 +125,25 @@ def test_is_point_in_convex_polygon():
 
     mask = shapeops.is_point_in_convex_polygon(shape, points)
     assert (mask == shapeops.is_point_in_bounds(shape.bounds, points)).all()
+
+
+@pytest.mark.parametrize('shape', [
+    shapely.geometry.box(0, 1, 2, 3),
+    shapely.geometry.box(3, 1, 4, 2),
+])
+def test_read_write_wkt(shape):
+    with tempfile.TemporaryDirectory() as folder:
+        filename = os.path.join(folder, 'shape.wkt')
+        shapeops.write_wkt(filename, shape)
+        assert shape.equals(shapeops.read_wkt(filename))
+
+
+@pytest.mark.parametrize('shape', [
+    shapely.geometry.box(0, 1, 2, 3),
+    shapely.geometry.box(3, 1, 4, 2),
+])
+def test_read_write_wkb(shape):
+    with tempfile.TemporaryDirectory() as folder:
+        filename = os.path.join(folder, 'shape.wkt')
+        shapeops.write_wkt(filename, shape)
+        assert shape.equals(shapeops.read_wkt(filename))
