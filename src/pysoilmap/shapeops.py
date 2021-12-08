@@ -219,6 +219,13 @@ def find_polygon_at_point(gdf: GeoDataFrame, points: np.ndarray) -> np.ndarray:
     :param points: an ``(N, 2)`` coordinate array.
     :return: an integer ``(N,)`` array
     """
+    mask = is_point_in_bounds(gdf.total_bounds, points)
+    result = np.full(mask.shape, -1)
+    result[mask] = _find_polygon_at_point(gdf, points[mask])
+    return result
+
+
+def _find_polygon_at_point(gdf: GeoDataFrame, points: np.ndarray):
     # This seems to be slightly slower than using shapely.strtree.STRtree,
     # but it is a bit more natural and simpler.
     index = gdf.sindex
