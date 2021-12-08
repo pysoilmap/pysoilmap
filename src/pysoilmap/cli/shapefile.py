@@ -6,6 +6,9 @@ import pysoilmap.shapeops as shapeops
 
 import click
 import geopandas as gpd
+import shapely.geometry
+import shapely.wkt
+import shapely.wkb
 
 import functools
 import os
@@ -138,3 +141,46 @@ def clip(gdf, shape):
     except ValueError as e:
         raise click.ClickException(str(e))
     return shapeops.clip(gdf, shape)
+
+
+@main.command()
+@click.option('-o', '--output', 'file', metavar='<file>')
+@needs_gdf
+def unary_union(gdf, file):
+    shape = gdf.unary_union
+    ext = os.path.splitext(file)[1]
+    if ext == '.wkt':
+        with open(shape, 'wt') as f:
+            shapely.wkt.dump(shape, f)
+    elif ext == '.wkb':
+        with open(shape, 'wb') as f:
+            shapely.wkb.dump(shape, f)
+
+
+@main.command()
+@click.option('-o', '--output', 'file', metavar='<file>')
+@needs_gdf
+def total_bounds(gdf, file):
+    bounds = gdf.total_bounds
+    if file is None:
+        print(bounds)
+        return
+    ext = os.path.splitext(file)[1]
+    shape = shapely.geometry.box(*bounds)
+    if ext == '.wkt':
+        with open(file, 'wt') as f:
+            shapely.wkt.dump(shape, f)
+    elif ext == '.wkb':
+        with open(file, 'wb') as f:
+            shapely.wkb.dump(shape, f)
+
+
+# @main.command()
+# @click.option('--')
+# @click.option('--bounds', 'bounds', metavar='<minx,miny,maxx,maxy>')
+# @click.option('--wkt', 'wkt', metavar='<file>')
+# @click.option('--wkb', 'wkb', metavar='<file>')
+# @click.option('--like', 'like', metavar='<file>')
+# @click.option('-o', '--output', 'file', metavar='<file>')
+# def raster():
+#     pass
