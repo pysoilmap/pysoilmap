@@ -13,10 +13,11 @@ geometries, file-formats, etc. Customized solutions are implemented where
 needed or more convenient.
 
 
-Software
-~~~~~~~~
+Resources
+~~~~~~~~~
 
-This is a list of some useful python packages in the context of DSM:
+This is a list of some useful python packages and other resources in the
+context of DSM:
 
 Data formats:
 
@@ -103,6 +104,22 @@ Jupyter:
 .. _jupyterlab: https://pypi.org/project/jupyterlab/
 .. _ipympl: https://pypi.org/project/ipympl/
 .. _ipywidgets: https://pypi.org/project/ipywidgets/
+
+Dataset catalogs:
+
+- `Earth Engine Data Catalog`_: Catalog of various environmental datasets
+- `Free GIS Data`_: Large collection of references to datasets
+- `Useful Geographic Datasets`_
+- `List of GIS data sources`_: wikipedia entry
+- `ArcGIS Hub`_
+- `EarthExplorer`_
+
+.. _Earth Engine Data Catalog: https://developers.google.com/earth-engine/datasets
+.. _Free GIS Data: https://freegisdata.rtwilson.com/
+.. _Useful Geographic Datasets: https://jcheshire.com/resources/geographic-datasets/
+.. _List of GIS data sources: https://en.wikipedia.org/wiki/List_of_GIS_data_sources
+.. _ArcGIS Hub: https://hub.arcgis.com/search
+.. _EarthExplorer: https://earthexplorer.usgs.gov/
 
 
 Features
