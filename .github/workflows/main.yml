@@ -31,6 +31,9 @@ jobs:
       - run: pip install dist/*.whl
       - run: flake8 src tests
       - run: coverage run --source=pysoilmap -p -m pytest -v tests
+      - run: coverage run --source=pysoilmap -p docs/examples/topography.py
+        env:
+          EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
 
       - uses: actions/upload-artifact@v2
         with:
@@ -54,8 +57,11 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: "3.9"
+      - run: sudo apt-get install -y pandoc
       - run: pip install -e .[doc]
       - run: make -C docs html
+        env:
+          EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
 
   deploy:
     name: Upload release

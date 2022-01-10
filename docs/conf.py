@@ -24,6 +24,7 @@ extensions = [
     'sphinx_automodapi.smart_resolver',     # see sphinx-autodoc-typehints#38
     'sphinx_autodoc_typehints',
     'sphinx_click',
+    'nbsphinx',
 ]
 
 add_module_names = False
@@ -42,7 +43,7 @@ intersphinx_mapping = {
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
     "matplotlib": ("https://matplotlib.org/", None),
-    'xarray': ('http://xarray.pydata.org', None),
+    'xarray': ('http://xarray.pydata.org/en/stable', None),
 }
 
 
@@ -69,3 +70,14 @@ def format_annotation(annotation, *args, **kwargs):
 
 format_annotation_original = sphinx_autodoc_typehints.format_annotation
 sphinx_autodoc_typehints.format_annotation = format_annotation
+
+
+def setup(app):
+    import os
+    import jupytext
+    for fname in os.listdir('examples'):
+        if fname.endswith('.py'):
+            print("Converting to notebook:", fname)
+            base, ext = os.path.splitext(fname)
+            nb = jupytext.read(os.path.join('examples', fname))
+            jupytext.write(nb, os.path.join('examples', base + '.ipynb'))

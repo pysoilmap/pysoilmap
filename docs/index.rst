@@ -25,6 +25,7 @@ needed or more convenient.
    :caption: Contents:
 
    installation
+   examples/index
    usage
    api/index
 
