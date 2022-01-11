@@ -61,6 +61,7 @@ if rtds_action_github_token:
     extensions.append('rtds_action')
 else:
     def setup(app):
+        import jupytext
         for filename in os.listdir('examples'):
             if filename.endswith('.py'):
                 basename, ext = os.path.splitext(filename)
