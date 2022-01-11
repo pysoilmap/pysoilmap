@@ -4,9 +4,6 @@
 
 import pysoilmap
 
-import inspect
-import sphinx_autodoc_typehints
-
 # -- Project information -----------------------------------------------------
 
 project = 'pysoilmap'
@@ -21,7 +18,6 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
     'sphinx_automodapi.automodapi',
-    'sphinx_automodapi.smart_resolver',     # see sphinx-autodoc-typehints#38
     'sphinx_autodoc_typehints',
     'sphinx_click',
     'nbsphinx',
@@ -50,26 +46,6 @@ intersphinx_mapping = {
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'alabaster'
-
-
-# -- Fix broken intersphinx links to Polygon ---------------------------------
-# See: https://github.com/agronholm/sphinx-autodoc-typehints/issues/38
-qualname_overrides = {
-    'shapely.geometry.polygon.Polygon': 'Polygon',
-}
-
-
-def format_annotation(annotation, *args, **kwargs):
-    if inspect.isclass(annotation):
-        full_name = f'{annotation.__module__}.{annotation.__qualname__}'
-        override = qualname_overrides.get(full_name)
-        if override is not None:
-            return f':py:class:`~{override}`'
-    return format_annotation_original(annotation, *args, **kwargs)
-
-
-format_annotation_original = sphinx_autodoc_typehints.format_annotation
-sphinx_autodoc_typehints.format_annotation = format_annotation
 
 
 def setup(app):
