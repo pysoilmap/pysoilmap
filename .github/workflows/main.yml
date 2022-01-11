@@ -25,15 +25,22 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - run: pip install -U pip wheel flake8 twine pytest coverage coveralls
-      - run: python setup.py sdist bdist_wheel
+      - run: pip install flake8
+      - run: flake8
+
+      - run: pip install build
+      - run: python -m build
+
+      - run: pip install twine
       - run: twine check dist/*
-      - run: pip install dist/*.whl
-      - run: flake8 src tests
+
+      - run: pip install pytest coverage
+      - run: pip install $(ls dist/*.whl)[doc]
       - run: coverage run --source=pysoilmap -p -m pytest -v tests
       - run: coverage run --source=pysoilmap -p docs/examples/topography.py
         env:
           EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
+      - run: coverage combine
 
       - uses: actions/upload-artifact@v2
         with:
@@ -43,7 +50,7 @@ jobs:
             matrix.os == 'ubuntu-latest' &&
             matrix.python == '3.8'
 
-      - run: coverage combine
+      - run: pip install coveralls
       - run: coveralls
         if: env.COVERALLS_REPO_TOKEN != ''
         env:
