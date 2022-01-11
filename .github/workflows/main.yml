@@ -66,9 +66,23 @@ jobs:
           python-version: "3.9"
       - run: sudo apt-get install -y pandoc
       - run: pip install -e .[doc]
-      - run: make -C docs html
+
+      - run: jupytext docs/examples/*.py --to ipynb --execute --use-source-timestamp
         env:
           EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
+
+      - run: make -C docs html
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: notebooks-for-${{ github.sha }}
+          path: docs/examples
+
+      - uses: dfm/rtds-action@v1
+        with:
+          webhook_url: ${{ secrets.RTDS_WEBHOOK_URL }}
+          webhook_token: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+          commit_ref: ${{ github.ref }}
 
   deploy:
     name: Upload release

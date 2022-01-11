@@ -10,5 +10,6 @@ build:
 python:
   version: 3.8
   install:
+    - requirements: docs/rtd_requirements.txt
     - path: .
       extra_requirements: [doc]
