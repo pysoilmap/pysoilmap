@@ -4,15 +4,15 @@
 Welcome to pysoilmap's documentation!
 =====================================
 
-This is a python library and command line program for performing Digital Soil
-Mapping (DSM) and related task.
+This project will contain examples and utilities for performing Digital Soil
+Mapping (DSM) and related tasks in python.
 
-This project aims to provide a high-level user interface and examples for
-common tasks related to DSM, accessible through a command line interface or
-python APIs. The actual legwork is done by established libraries for numerical
-computations, machine-learning, image-processing, geostatistics, projections,
-geometries, file-formats, etc. Customized solutions are implemented where
-needed or more convenient.
+This project aims to provide examples and utilities for common tasks related
+to DSM. For some of these tasks, we also want to work on high-level user
+interfaces, accessible via python APIs or the command line. The actual legwork
+is done by established libraries for numerical computations, machine-learning,
+image-processing, geostatistics, projections, geometries, file-formats, etc.
+Custom solutions are implemented where needed or more convenient.
 
 .. _Documentation: https://pysoilmap.readthedocs.io/en/latest/
 .. _Releases: https://pypi.python.org/pypi/pysoilmap
@@ -25,6 +25,7 @@ needed or more convenient.
    :caption: Contents:
 
    installation
+   examples/index
    usage
    api/index
 
@@ -46,26 +47,25 @@ This project has just been initiated, there are not many features yet.
 
 Features so far:
 
-- (none)
+- computation of several topographic covariates from DEM (curvatures, slope,
+  aspect, radiation angle, ...)
 
 
 Roadmap
-*******
+~~~~~~~
 
-In the future, we plan on working the following features:
+In the future, we plan on working the following topics:
 
-- common interface for several machine learning models for linear
-  regression, kriging, regression-kriging, random forests, ...
-- computation of several topographic covariates from DEM (curvatures, slope,
-  aspect, radiation angle, ...)
-- plotting of raster and vector data
-- reprojection, resampling
+- common easy-to-use interface (like scikit-learn) for several machine
+  learning models for linear regression, kriging, regression-kriging, random
+  forests, ...
+- examples for plotting raster and vector data
+- examples for reprojection, resampling (using rasterio/gdal)
 - sampling points from vector datasets
-- custom non-stationary GP kernels for DSM
+- custom (non-stationary) GP kernels for DSM
 - algorithms for experimental design (DOE)
 - 3D terrain survey
 - ...?
-
 
 
 Indices and tables
