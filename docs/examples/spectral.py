@@ -41,7 +41,6 @@ psee.initialize()
 #
 # For the purpose of this example, we'll select a specific image
 # taken on a specific flyover to keep the computation time short.
-# A more advanced use case
 
 img = ee.Image("COPERNICUS/S2/20180427T102019_20180427T102022_T32UNU")
 img = img.divide(10_000)
@@ -76,9 +75,10 @@ HI = R.multiply(2).subtract(G).subtract(B).divide(G.subtract(B))
 NDVI = NIR.subtract(R).divide(NIR.add(R))
 
 # These derived images can now be added in javascript using
-# [Map.addLayer()](https://developers.google.com/earth-engine/apidocs/map-addlayer)
-# or in python using e.g.
-# [geemap.Map.addLayer()](https://geemap.org/geemap/#geemap.geemap.Map.addLayer).
+# [Map.addLayer()][1] or in python using e.g. [geemap.Map.addLayer()][2].
+#
+# [1]: https://developers.google.com/earth-engine/apidocs/map-addlayer
+# [2]: https://geemap.org/geemap/#geemap.geemap.Map.addLayer
 #
 # For the purpose of this notebook, we'll add it to a
 # `folium.Map` using `pysoilmap.ee.add_map_layer()`:

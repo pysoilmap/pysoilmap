@@ -41,6 +41,7 @@ jobs:
       - run: coverage run --source=pysoilmap -p -m pytest -v tests
       - run: coverage run --source=pysoilmap -p docs/examples/topography.py
       - run: coverage run --source=pysoilmap -p docs/examples/spectral.py
+      - run: coverage run --source=pysoilmap -p docs/examples/clouds.py
       - run: coverage combine
 
       - uses: actions/upload-artifact@v2

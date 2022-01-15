@@ -7,3 +7,4 @@ Examples
 
    topography.ipynb
    spectral.ipynb
+   clouds.ipynb

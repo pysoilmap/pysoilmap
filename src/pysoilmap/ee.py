@@ -110,8 +110,9 @@ def add_map_layer(
     ).add_to(self)
 
 
-def vis(img: ee.Image, bands: list = None) -> dict:
+def vis(img: ee.Image, bands: list = None, region: ee.Geometry = None) -> dict:
     """Return visualization parameters for the given image."""
+    region = region or img.geometry()
     bands = bands or img.bandNames().getInfo()
     reducer = ee.Reducer.percentile([1, 99], ['min', 'max'])
     quantiles = img.reduceRegion(reducer, scale=90, bestEffort=True).getInfo()
@@ -168,3 +169,43 @@ class LayerRadioControl(folium.LayerControl):
             {%- endfor %}
         {% endmacro %}
         """)
+
+
+# Author: Gennadii Donchyts
+# License: Apache 2.0
+def cast_shadows(image: ee.Image, cloud: ee.Image) -> ee.Image:
+    """Calculate potential locations of cloud shadows."""
+    # solar geometry (radians)
+    azimuth = (
+        ee.Number(image.get("MEAN_SOLAR_AZIMUTH_ANGLE"))
+        .multiply(np.pi / 180.0)
+        .add(0.5 * np.pi)
+    )
+    zenith = (
+        ee.Number(0.5 * np.pi)
+        .subtract(
+            ee.Number(image.get("MEAN_SOLAR_ZENITH_ANGLE"))
+            .multiply(np.pi / 180.0)
+        )
+    )
+    # find where cloud shadows should be based on solar geometry
+    nominalScale = cloud.projection().nominalScale()
+
+    def change_cloud_projection(cloudHeight):
+        shadowVector = zenith.tan().multiply(cloudHeight)
+        x = azimuth.cos().multiply(shadowVector).divide(nominalScale).round()
+        y = azimuth.sin().multiply(shadowVector).divide(nominalScale).round()
+        return cloud.changeProj(
+            cloud.projection(),
+            cloud.projection().translate(x, y))
+
+    cloudHeights = ee.List.sequence(200, 10000, 500)
+    shadows = cloudHeights.map(change_cloud_projection)
+    shadows = ee.ImageCollection.fromImages(shadows).max()
+
+    # (modified by Sam Murphy) dark pixel detection
+    # B3 = green
+    # B12 = swir2
+    dark = image.normalizedDifference(["B3", "B12"]).gt(0.25)
+    shadows = shadows.And(dark)
+    return shadows
