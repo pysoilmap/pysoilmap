@@ -2,8 +2,8 @@
 Computation of topographic variables from a DEM.
 
 The DEM's axes ordering is assumed to be ``(Y, X)`` in accordance with the
-convention used for :func:`matplotlib.imshow` and other standard numpy
-functionality.
+same convention as for :func:`numpy.meshgrid` or
+:func:`matplotlib.pyplot.imshow`.
 """
 
 import affine

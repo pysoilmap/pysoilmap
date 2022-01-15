@@ -49,11 +49,14 @@ intersphinx_mapping = {
 
 # -- Options for HTML output -------------------------------------------------
 
+html_css_files = ['custom.css']
+html_static_path = ['_static']
+
+# https://alabaster.readthedocs.io/en/latest/customization.html
 html_theme = 'alabaster'
 html_theme_options = {'page_width': '970px'}
-html_static_path = ['_static']
-html_css_files = ['custom.css']
 
+# https://nbsphinx.readthedocs.io/en/0.8.2/usage.html
 nbsphinx_prompt_width = '0px'
 nbsphinx_execute = 'never'
 

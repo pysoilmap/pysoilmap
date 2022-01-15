@@ -44,11 +44,13 @@ Covariates:
   arbitrary locations
 - pysheds_: watershed delineation
 - richdem_: set of DEM hydrologic analysis tools
+- xarray-spatial_: common raster analysis functions, DEM generation
 - xclim_: derived climate variables built with xarray
 
 .. _elevation: https://pypi.org/project/elevation/
 .. _pysheds: https://pypi.org/project/pysheds/
 .. _richdem: https://pypi.org/project/richdem/
+.. _xarray-spatial: https://github.com/makepath/xarray-spatial
 .. _xclim: https://pypi.org/project/xclim/
 
 Google earth:

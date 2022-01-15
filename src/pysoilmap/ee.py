@@ -9,7 +9,7 @@ import numpy as np
 
 import io
 import os
-from urllib.request import urlopen
+import urllib.request
 
 
 def initialize():
@@ -71,7 +71,7 @@ def download_image(
 def load_image(image, **kwargs):
     fmt = kwargs.setdefault('format', 'NPY')
     url = image.getDownloadUrl(kwargs)
-    with urlopen(url) as f:
+    with urllib.request.urlopen(url) as f:
         data = f.read()
     if fmt == 'NPY':
         return np.load(io.BytesIO(data))
