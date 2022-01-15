@@ -49,7 +49,7 @@ def diff_finite(
     """
     wx = misc.central_diff_weights(dx + 1 + dx % 2, dx).reshape(1, -1)
     wy = misc.central_diff_weights(dy + 1 + dy % 2, dy).reshape(-1, 1)
-    image = as_float_array(dem)
+    image = _as_float_array(dem)
     image = ndimage.convolve(image, wx, mode='nearest')
     image = ndimage.convolve(image, wy, mode='nearest')
     norm = np.product(cellsize ** np.array([dy, dx]))
@@ -76,7 +76,7 @@ def diff_gauss(
     :param sigma: lengthscale in unit of pixels
     """
     norm = np.product(cellsize ** np.array([dy, dx]))
-    image = as_float_array(dem)
+    image = _as_float_array(dem)
     image = ndimage.gaussian_filter(image, order=[dy, dx], sigma=sigma)
     return image / norm
 
@@ -118,7 +118,7 @@ class Topography:
         **kwargs,
     ):
         self._cache = {}
-        self._dem = as_float_array(dem)
+        self._dem = _as_float_array(dem)
         self._diff = diff
         self._transform = transform
         self._crs = crs
@@ -218,7 +218,7 @@ class Topography:
         - http://surferhelp.goldensoftware.com/gridops/plan_curvature.htm
         - Map Use: Reading, Analysis, Interpretation, Seventh Edition (p. 360)
         """
-        return safe_divide(
+        return _safe_divide(
             self.D2x() * self.Dy2() +
             self.Dx2() * self.D2y() - 2 * self._Dxy(),
             self._p() ** 1.5,
@@ -233,7 +233,7 @@ class Topography:
         - http://surferhelp.goldensoftware.com/gridops/tangential_curvature.htm
         - Map Use: Reading, Analysis, Interpretation, Seventh Edition (p. 360)
         """
-        return safe_divide(
+        return _safe_divide(
             self.D2x() * self.Dy2() +
             self.Dx2() * self.D2y() - 2 * self._Dxy(),
             self._q()**0.5 * self._p(),
@@ -247,7 +247,7 @@ class Topography:
         - http://surferhelp.goldensoftware.com/gridops/profile_curvature.htm
         - Map Use: Reading, Analysis, Interpretation, Seventh Edition (p. 360)
         """
-        return safe_divide(
+        return _safe_divide(
             self.D2x() * self.Dx2() +
             self.Dy2() * self.D2y() + 2 * self._Dxy(),
             self._q()**1.5 * self._p(),
@@ -454,14 +454,14 @@ def rad_angle(aspect, slope, latitude, declination=0.0):
     return (-c + np.sqrt(c**2 - 4 * b * d)) / (2*b)
 
 
-def as_float_array(array: np.ndarray, min_float=np.float32) -> np.ndarray:
+def _as_float_array(array: np.ndarray, min_float=np.float32) -> np.ndarray:
     """Convert array to a floating point array."""
     array = np.asanyarray(array)
     dtype = np.result_type(array, min_float)
     return np.asanyarray(array, dtype=dtype)
 
 
-def safe_divide(a: np.ndarray, b: np.ndarray, fill=np.nan) -> np.ndarray:
+def _safe_divide(a: np.ndarray, b: np.ndarray, fill=np.nan) -> np.ndarray:
     """Perform division without complaining about division by zero. Fills
     nan/inf values by the given fill value (can be an array that broadcasts
     to the result shape)."""
