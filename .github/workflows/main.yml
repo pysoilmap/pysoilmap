@@ -18,6 +18,8 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
 
     steps:
       - uses: actions/checkout@v2
@@ -38,8 +40,7 @@ jobs:
       - run: pip install $(ls dist/*.whl)[doc]
       - run: coverage run --source=pysoilmap -p -m pytest -v tests
       - run: coverage run --source=pysoilmap -p docs/examples/topography.py
-        env:
-          EE_KEY_DATA: ${{ secrets.EE_KEY_DATA }}
+      - run: coverage run --source=pysoilmap -p docs/examples/spectral.py
       - run: coverage combine
 
       - uses: actions/upload-artifact@v2

@@ -25,14 +25,14 @@ import ee
 import matplotlib.pyplot as plt
 import numpy as np
 
-import pysoilmap.ee as psm_ee
+import pysoilmap.ee as psee
 from pysoilmap.features import Topography, diff_gauss
 from pysoilmap.plotting import add_colorbar
 
 # We will download a DEM via the Google Earth Engine API.
 # For this, you will have to authenticate with a google account here:
 
-psm_ee.initialize()
+psee.initialize()
 
 # The SRTM data is in WGS84 (degree). We want a coordinate system in meters to
 # get meaningful units in derived quantities.
@@ -61,7 +61,7 @@ transform = [xscale, 0, xmin, 0, -yscale, ymax]
 # Now download DEM from SRTM 30m dataset:
 
 srtm = ee.Image("USGS/SRTMGL1_003")
-dem = psm_ee.download_image(
+dem = psee.download_image(
     srtm,
     band='elevation',
     crs=crs,

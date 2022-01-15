@@ -3,6 +3,7 @@ Examples
 
 
 .. toctree::
-   :glob:
+   :maxdepth: 2
 
    topography.ipynb
+   spectral.ipynb

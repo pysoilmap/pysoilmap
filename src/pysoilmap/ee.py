@@ -75,3 +75,50 @@ def load_image(image, **kwargs):
         return np.load(io.BytesIO(data))
     else:
         return data
+
+
+def add_map_layer(
+    self,
+    image: ee.Image,
+    vis_params: dict = None,
+    name: str = None,
+    show: bool = True,
+    opacity: float = 1,
+    min_zoom: int = 0,
+):
+    """Add an image layer to a :class:`folium.Map`."""
+    import folium
+    if vis_params is None:
+        vis_params = vis(image)
+    if name is None:
+        name = ', '.join(image.bandNames().getInfo())
+    attribution = (
+        'Map Data &copy; <a href="https://earthengine.google.com/">'
+        'Google Earth Engine</a>')
+    tiles = image.getMapId(vis_params)['tile_fetcher']
+    folium.raster_layers.TileLayer(
+        tiles=tiles.url_format,
+        attr=attribution,
+        name=name,
+        show=show,
+        opacity=opacity,
+        min_zoom=min_zoom,
+        overlay=True,
+        control=True,
+    ).add_to(self)
+
+
+def vis(img: ee.Image, bands: list = None) -> dict:
+    """Return visualization parameters for the given image."""
+    bands = bands or img.bandNames().getInfo()
+    reducer = ee.Reducer.percentile([1, 99], ['min', 'max'])
+    quantiles = img.reduceRegion(reducer, scale=90, bestEffort=True).getInfo()
+    return {
+        'min': [quantiles[b + '_min'] for b in bands],
+        'max': [quantiles[b + '_max'] for b in bands],
+    }
+
+
+def center(image: ee.Image) -> list:
+    """Center a folium.Map on a given Image."""
+    return image.geometry().centroid(10).coordinates().reverse().getInfo()

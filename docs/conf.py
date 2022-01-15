@@ -36,6 +36,7 @@ typehints_document_rtype = True
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 intersphinx_mapping = {
+    'folium': ('http://python-visualization.github.io/folium/', None),
     'geopandas': ('https://geopandas.org', None),
     'matplotlib': ('https://matplotlib.org/', None),
     'numpy': ('https://docs.scipy.org/doc/numpy/', None),
@@ -49,6 +50,12 @@ intersphinx_mapping = {
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'alabaster'
+html_theme_options = {'page_width': '970px'}
+html_static_path = ['_static']
+html_css_files = ['custom.css']
+
+nbsphinx_prompt_width = '0px'
+nbsphinx_execute = 'never'
 
 
 # -- Build or download the example notebooks ---------------------------------
