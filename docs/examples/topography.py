@@ -63,7 +63,7 @@ transform = [xscale, 0, xmin, 0, -yscale, ymax]
 srtm = ee.Image("USGS/SRTMGL1_003")
 dem = psee.download_image(
     srtm,
-    band='elevation',
+    'elevation',
     crs=crs,
     transform=transform,
     xdim=xdim,

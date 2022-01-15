@@ -38,8 +38,8 @@ def initialize():
 
 def download_image(
     image: ee.Image,
+    bands: "str | list" = None,
     *,
-    band: str,
     crs: str,
     transform: list,
     xdim: int,
@@ -56,14 +56,14 @@ def download_image(
     ``transform`` should be: [xmin, 0, xscale, 0, -yscale, ymax]
     """
     result = load_image(image, **{
-        'bands': [band],
+        'bands': [bands] if isinstance(bands, str) else bands,
         'crs': crs,
         'crs_transform': transform,
         'dimensions': [xdim, ydim],
         'format': format,
     })
-    if isinstance(result, np.ndarray):
-        return result[band]
+    if isinstance(result, np.ndarray) and isinstance(bands, str):
+        return result[bands]
     else:
         return result
 
