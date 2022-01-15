@@ -3,6 +3,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
 import os
+from glob import glob
 
 import pysoilmap
 
@@ -62,12 +63,12 @@ if rtds_action_github_token:
 else:
     def setup(app):
         import jupytext
-        for filename in os.listdir('examples'):
-            if filename.endswith('.py'):
-                basename, ext = os.path.splitext(filename)
-                src = os.path.join('examples', basename + '.py')
-                dst = os.path.join('examples', basename + '.ipynb')
-                if os.path.getmtime(src) > os.path.getmtime(dst):
-                    print("Converting to notebook:", src)
-                    nb = jupytext.read(src)
-                    jupytext.write(nb, dst)
+        for filename in glob('examples/*.py'):
+            basename, ext = os.path.splitext(filename)
+            src = basename + '.py'
+            dst = basename + '.ipynb'
+            modify_window = 1.0
+            if os.path.getmtime(src) > os.path.getmtime(dst) + modify_window:
+                print("Converting to notebook:", src)
+                nb = jupytext.read(src)
+                jupytext.write(nb, dst)
