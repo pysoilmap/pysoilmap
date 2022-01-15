@@ -93,5 +93,5 @@ Map.addLayer(CI, name="Coloration Index")
 Map.addLayer(RI, name="Redness Index")
 Map.addLayer(HI, name="Hue Index")
 Map.addLayer(NDVI, name="NDVI")
-Map.add_child(folium.LayerControl())
+Map.add_child(psee.LayerRadioControl())
 Map

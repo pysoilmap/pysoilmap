@@ -3,6 +3,8 @@ Utilities for Google Earth Engine API.
 """
 
 import ee
+import folium
+import jinja2
 import numpy as np
 
 import io
@@ -78,7 +80,7 @@ def load_image(image, **kwargs):
 
 
 def add_map_layer(
-    self,
+    self: folium.Map,
     image: ee.Image,
     vis_params: dict = None,
     name: str = None,
@@ -122,3 +124,47 @@ def vis(img: ee.Image, bands: list = None) -> dict:
 def center(image: ee.Image) -> list:
     """Center a folium.Map on a given Image."""
     return image.geometry().centroid(10).coordinates().reverse().getInfo()
+
+
+class LayerRadioControl(folium.LayerControl):
+
+    """
+    Same as folium.LayerControl, but assumes the overlay layers are exclusive
+    and the base layers are optional.
+    """
+
+    _template = jinja2.Template("""
+        {% macro script(this,kwargs) %}
+            var {{ this.get_name() }} = {
+                base_layers : {
+                    {%- for key, val in this.base_layers.items() %}
+                    {{ key|tojson }} : {{val}},
+                    {%- endfor %}
+                },
+                overlays :  {
+                    {%- for key, val in this.overlays.items() %}
+                    {{ key|tojson }} : {{val}},
+                    {%- endfor %}
+                },
+            };
+            L.control.layers(
+                {{ this.get_name() }}.overlays,
+                {{ this.get_name() }}.base_layers,
+                {{ this.options|tojson }}
+            ).addTo({{this._parent.get_name()}});
+
+            (function(control) {
+                Object.keys(control.base_layers).forEach(function(key, idx) {
+                    control.base_layers[key].setZIndex(-idx);
+                });
+
+                Object.keys(control.overlays).forEach(function(key, idx) {
+                    control.overlays[key].setZIndex(idx + 1);
+                });
+            })({{ this.get_name() }});
+
+            {%- for val in this.layers_untoggle.values() %}
+            {{ val }}.remove();
+            {%- endfor %}
+        {% endmacro %}
+        """)
