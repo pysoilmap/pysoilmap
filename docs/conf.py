@@ -52,6 +52,10 @@ intersphinx_mapping = {
 templates_path = ['_templates']
 html_css_files = ['custom.css']
 html_static_path = ['_static']
+html_context = {
+    'repo_url': 'https://github.com/pysoilmap/pysoilmap',
+    'source_url': 'https://github.com/pysoilmap/pysoilmap/blob/main',
+}
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 html_theme = 'alabaster'
@@ -93,3 +97,6 @@ def html_page_context(app, pagename, templatename, context, doctree):
     context['display_github'] = not pagename.startswith('automod/')
     if context.get('page_source_suffix') == '.ipynb':
         context['page_source_suffix'] = '.py'
+    context['page_source'] = 'docs/{}{}'.format(
+        context.get('pagename', ''),
+        context.get('page_source_suffix', ''))

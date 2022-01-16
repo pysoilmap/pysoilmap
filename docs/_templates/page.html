@@ -2,10 +2,12 @@
 
 {%- block body %}
 		{%- if hasdoc(pagename) and display_github %}
-		<a class="sourcelink" href="https://github.com/pysoilmap/pysoilmap/blob/main/docs/{{ pagename }}{{ page_source_suffix }}">
-		<img src="{{ pathto('_static/mark-github-16.svg', True)|e }}" style="height: 0.8em;">
-		&nbsp;docs / {{ pagename | replace('/', ' / ') }}{{ page_source_suffix }}
-		</a>
+    <a class="sourcelink" href="{{ repo_url }}"><img src="{{ pathto('_static/mark-github-16.svg', True)|e }}"></a>
+    {%- set parts = page_source.split('/') %}
+		{%- for part in parts %}
+      <a class="sourcelink" href="{{ source_url }}/{{ '/'.join(parts[:loop.index]) }}">{{ part }}</a>
+      {{ '' if loop.last else ' / ' }}
+    {% endfor %}
 		<hr/>
 		{%- endif %}
   {{ body }}
