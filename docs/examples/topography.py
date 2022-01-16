@@ -199,3 +199,19 @@ plot_maps(*[{
     "sun_exposure": topo.sun_exposure(),
     "rad_angle": topo.rad_angle(),
 } for topo in topos])
+
+# When downloading bigger images, it may be necessary to load them
+# in chunks. This can be done as follows:
+
+dem23 = psee.download_image(
+    srtm,
+    'elevation',
+    crs=crs,
+    transform=transform,
+    xdim=xdim,
+    ydim=ydim,
+    xtile=2,
+    ytile=3,
+    threads=3,
+)
+assert (dem23 == dem).all()

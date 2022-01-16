@@ -8,6 +8,7 @@ import jinja2
 import numpy as np
 
 import io
+import math
 import os
 import urllib.request
 
@@ -45,23 +46,66 @@ def download_image(
     xdim: int,
     ydim: int,
     format: str = 'NPY',
+    xtile: int = 1,
+    ytile: int = 1,
+    threads: int = 1,
 ):
     """
     Download a small image (<=50MB) from Google Earth Engine API.
 
-    :param: bands
+    :param bands: list of band names to download
+    :param crs: name of the coordinate system
+    :param transform: ``[xscale, xshear, xoffs, yshear, yscale, yoffs]``
+    :param xdim: image width in pixels
+    :param ydim: image height in pixels
+    :param format: file format, leave as 'NPY' for now!
+    :param xtile: download image in ``xtile * ytile`` pieces
+    :param ytile: download image in ``xtile * ytile`` pieces
+    :param threads: number of threads for tiled download
 
-    Note that ``transform`` defines
-
-    ``transform`` should be: [xmin, 0, xscale, 0, -yscale, ymax]
+    Note that ``transform`` defines the transformation of ``(col, row)`` to
+    coordinates. In order to have the (0, 0) pixel in the upper left corner
+    ``transform`` should be: ``[xmin, 0, xscale, 0, -yscale, ymax]``.
     """
-    result = load_image(image, **{
-        'bands': [bands] if isinstance(bands, str) else bands,
-        'crs': crs,
-        'crs_transform': transform,
-        'dimensions': [xdim, ydim],
-        'format': format,
-    })
+    if xtile * ytile == 1:
+        result = load_image(image, **{
+            'bands': [bands] if isinstance(bands, str) else bands,
+            'crs': crs,
+            'crs_transform': transform,
+            'dimensions': [xdim, ydim],
+            'format': format,
+        })
+    else:
+        with _ThreadPool(threads) as pool:
+            tile_width = math.ceil(xdim / xtile)
+            tile_height = math.ceil(ydim / ytile)
+            xscale, xshear, xoffs, yshear, yscale, yoffs = transform
+
+            def make_tile(row, col):
+                tile_xdim = min(tile_width, xdim - col)
+                tile_ydim = min(tile_height, ydim - row)
+                tile_xoffs = xscale * col + xshear * row + xoffs
+                tile_yoffs = yscale * row + yshear * col + yoffs
+                tile_trans = [
+                    xscale, xshear, tile_xoffs,
+                    yshear, yscale, tile_yoffs,
+                ]
+                return load_image(image, **{
+                    'bands': [bands] if isinstance(bands, str) else bands,
+                    'crs': crs,
+                    'crs_transform': tile_trans,
+                    'dimensions': [tile_xdim, tile_ydim],
+                    'format': format,
+                })
+            tiles = pool.starmap(make_tile, [
+                (i * tile_height, j * tile_width)
+                for i in range(ytile)
+                for j in range(xtile)
+            ])
+        result = np.block([
+            tiles[xtile * row:xtile * (row + 1)]
+            for row in range(ytile)
+        ])
     if isinstance(result, np.ndarray) and isinstance(bands, str):
         return result[bands]
     else:
@@ -209,3 +253,22 @@ def cast_shadows(image: ee.Image, cloud: ee.Image) -> ee.Image:
     dark = image.normalizedDifference(["B3", "B12"]).gt(0.25)
     shadows = shadows.And(dark)
     return shadows
+
+
+class _ThreadPool:
+
+    def __new__(cls, n_threads):
+        if n_threads > 1:
+            from multiprocessing.pool import ThreadPool
+            return ThreadPool(n_threads)
+        else:
+            return object.__new__(cls)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_state):
+        pass
+
+    def starmap(self, func, iterable):
+        return [func(*item) for item in iterable]
