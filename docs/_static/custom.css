@@ -1,3 +1,11 @@
+div.document {
+  width: 970px;
+}
+
 div.body {
   padding-left: 50px;
+}
+
+a.sourcelink {
+  text-decoration: none;
 }

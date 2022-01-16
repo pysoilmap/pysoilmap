@@ -49,12 +49,13 @@ intersphinx_mapping = {
 
 # -- Options for HTML output -------------------------------------------------
 
+templates_path = ['_templates']
 html_css_files = ['custom.css']
 html_static_path = ['_static']
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
 html_theme = 'alabaster'
-html_theme_options = {'page_width': '970px'}
+html_theme_options = {}
 
 # https://nbsphinx.readthedocs.io/en/0.8.2/usage.html
 nbsphinx_prompt_width = '0px'
@@ -64,14 +65,17 @@ nbsphinx_execute = 'never'
 # -- Build or download the example notebooks ---------------------------------
 
 rtds_action_github_token = os.environ.get('RTD_GITHUB_TOKEN')
-if rtds_action_github_token:
-    rtds_action_path = 'examples'
-    rtds_action_github_repo = 'pysoilmap/pysoilmap'
-    rtds_action_artifact_prefix = 'notebooks-for-'
-    rtds_action_error_if_missing = False
-    extensions.append('rtds_action')
-else:
-    def setup(app):
+rtds_action_path = 'examples'
+rtds_action_github_repo = 'pysoilmap/pysoilmap'
+rtds_action_artifact_prefix = 'notebooks-for-'
+rtds_action_error_if_missing = False
+
+
+def setup(app):
+    app.connect("html-page-context", html_page_context)
+    if rtds_action_github_token:
+        app.setup_extension('rtds_action')
+    else:
         import jupytext
         for filename in glob('examples/*.py'):
             basename, ext = os.path.splitext(filename)
@@ -82,3 +86,10 @@ else:
                 print("Converting to notebook:", src)
                 nb = jupytext.read(src)
                 jupytext.write(nb, dst)
+
+
+def html_page_context(app, pagename, templatename, context, doctree):
+    """Avoid broken source links to auto-generated API-docs."""
+    context['display_github'] = not pagename.startswith('automod/')
+    if context.get('page_source_suffix') == '.ipynb':
+        context['page_source_suffix'] = '.py'
