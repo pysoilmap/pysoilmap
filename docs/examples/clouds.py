@@ -48,6 +48,12 @@ rgb = img.select(["B2", "B3", "B4"]).divide(10_000)
 clouds = img.select('QA60').bitwiseAnd(0xc00)
 opaque = clouds.bitwiseAnd(0x400)
 cirrus = clouds.bitwiseAnd(0x800)
+
+# Try to detect cloud shadows by projecting the clouds on the surface
+# (adapted from the 3_Sentinel2_CloudAndShadowMask notebook in [AGREE][1]):
+#
+# [1]: https://github.com/rdandrimont/AGREE
+
 shad_o = psee.cast_shadows(img, opaque)
 shad_c = psee.cast_shadows(img, cirrus)
 

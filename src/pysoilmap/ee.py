@@ -218,7 +218,12 @@ class LayerRadioControl(folium.LayerControl):
 # Author: Gennadii Donchyts
 # License: Apache 2.0
 def cast_shadows(image: ee.Image, cloud: ee.Image) -> ee.Image:
-    """Calculate potential locations of cloud shadows."""
+    """
+    Calculate potential locations of cloud shadows.
+
+    Adapted from the 3_Sentinel2_CloudAndShadowMask notebook in:
+    https://github.com/rdandrimont/AGREE/
+    """
     # solar geometry (radians)
     azimuth = (
         ee.Number(image.get("MEAN_SOLAR_AZIMUTH_ANGLE"))
