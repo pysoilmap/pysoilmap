@@ -55,6 +55,7 @@ html_static_path = ['_static']
 html_context = {
     'repo_url': 'https://github.com/pysoilmap/pysoilmap',
     'source_url': 'https://github.com/pysoilmap/pysoilmap/blob/main',
+    'display_github': True,
 }
 
 # https://alabaster.readthedocs.io/en/latest/customization.html
@@ -94,9 +95,17 @@ def setup(app):
 
 def html_page_context(app, pagename, templatename, context, doctree):
     """Avoid broken source links to auto-generated API-docs."""
-    context['display_github'] = not pagename.startswith('automod/')
-    if context.get('page_source_suffix') == '.ipynb':
-        context['page_source_suffix'] = '.py'
-    context['page_source'] = 'docs/{}{}'.format(
-        context.get('pagename', ''),
-        context.get('page_source_suffix', ''))
+    pagesuffix = context.get('page_source_suffix')
+    if pagesuffix == '.ipynb':
+        pagesuffix = '.py'
+    if pagename.startswith('automod/'):
+        modname = pagename.split('/', 1)[1].rsplit('.', 1)[0]
+        srcname = 'src/{}.py'.format(modname.replace('.', '/'))
+    elif pagename.startswith('_modules/'):
+        modname = pagename.split('/', 1)[1]
+        srcname = 'src/{}.py'.format(modname.replace('.', '/'))
+    elif context['hasdoc'](pagename):
+        srcname = 'docs/{}{}'.format(pagename, pagesuffix)
+    else:
+        srcname = None
+    context['page_source'] = srcname

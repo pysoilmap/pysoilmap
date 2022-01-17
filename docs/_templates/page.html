@@ -1,14 +1,14 @@
 {%- extends "basic/page.html" %}
 
 {%- block body %}
-		{%- if hasdoc(pagename) and display_github %}
+		{%- if page_source %}
     <a class="sourcelink" href="{{ repo_url }}"><img src="{{ pathto('_static/mark-github-16.svg', True)|e }}"></a>
     {%- set parts = page_source.split('/') %}
 		{%- for part in parts %}
       <a class="sourcelink" href="{{ source_url }}/{{ '/'.join(parts[:loop.index]) }}">{{ part }}</a>
-      {{ '' if loop.last else ' / ' }}
-    {% endfor %}
+      {{- '' if loop.last else ' / ' }}
+    {%- endfor %}
 		<hr/>
 		{%- endif %}
-  {{ body }}
+  {{- body }}
 {% endblock %}
