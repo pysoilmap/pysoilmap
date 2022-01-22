@@ -34,6 +34,7 @@ Data formats:
 - rasterio_: for GeoTIFF files
 - xarray_ for NetCDF (.nc) files. It can also read GeoTIFF if rasterio is
   installed.
+- GDAL_ of course… (``import osgeo.gdal``)
 - (exifread_ can read metadata from TIFFs)
 - (pyshp_: read/write raw shapefiles, without the overhead or convenience of
   geopandas)
@@ -43,6 +44,7 @@ Data formats:
 .. _rasterio: https://pypi.org/project/rasterio/
 .. _xarray: https://pypi.org/project/xarray/
 .. _pyshp: https://pypi.org/project/pyshp/
+.. _gdal: https://gdal.org/index.html
 .. _exifread: https://pypi.org/project/exifread/
 .. _xlrd: https://pypi.org/project/xlrd/
 
@@ -73,14 +75,18 @@ Machine learning:
 
 - scipy_: General purpose scientific library, optimizers, image filters
 - scikit-learn_: Many easy-to-use general purpose machine learning algorithms
+- imbalanced-learn_: resampling for datasets with strong class imbalance
 - PyKrige_: Kriging toolkit
+- GSTools_: GeoStatTools provides geostatistical tools for various purposes
 - GPflow_: Gaussian processes in tensorflow
 - gpytorch_: Gaussian processes in pytorch
 - (scikit-image_: collection of algorithms for image processing)
 
 .. _scipy: https://pypi.org/project/scipy/
 .. _scikit-learn: https://pypi.org/project/scikit-learn/
+.. _imbalanced-learn: https://github.com/scikit-learn-contrib/imbalanced-learn
 .. _pykrige: https://pypi.org/project/pykrige/
+.. _gstools: https://github.com/GeoStat-Framework/GSTools
 .. _gpflow: https://pypi.org/project/gpflow/
 .. _gpytorch: https://pypi.org/project/gpytorch/
 .. _scikit-image: https://pypi.org/project/scikit-image/
@@ -130,6 +136,15 @@ Dataset catalogs:
 .. _List of GIS data sources: https://en.wikipedia.org/wiki/List_of_GIS_data_sources
 .. _ArcGIS Hub: https://hub.arcgis.com/search
 .. _EarthExplorer: https://earthexplorer.usgs.gov/
+
+
+Misc:
+
+- PySAL_: "Python Spatial Analysis Library". Looks generally useful, but I
+  didn't check it out in detail yet.
+
+
+.. _PySAL: https://github.com/pysal/pysal
 
 
 Roadmap
