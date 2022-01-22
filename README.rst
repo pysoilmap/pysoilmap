@@ -1,16 +1,24 @@
 pysoilmap
 =========
 
-|Version| |License| |Docs| |Tests| |Coverage|
+|Docs| |Version| |License| |Tests| |Coverage|
 
-Examples and utilities for performing Digital Soil Mapping (DSM) with python.
+This project does currently not contain meaningful functionality, and it is
+currently lacking a clear vision. After some consideration I decided that the
+original intended scope of the project was too far-reaching.
+
+An updated idea could sound like this:
 
 This project aims to provide examples and utilities for common tasks related
 to DSM. For some of these tasks, we also want to work on high-level user
 interfaces, accessible via python APIs or the command line. The actual legwork
-is done by established libraries for numerical computations, machine-learning,
-image-processing, geostatistics, projections, geometries, file-formats, etc.
-Custom solutions are implemented where needed or more convenient.
+is done by established libraries. Custom solutions are implemented where
+needed or more convenient.
+
+For more info, see Roadmap_.
+
+For now, you might find the examples in the docs or the list of Resources_
+useful.
 
 
 Resources
@@ -122,17 +130,6 @@ Dataset catalogs:
 .. _List of GIS data sources: https://en.wikipedia.org/wiki/List_of_GIS_data_sources
 .. _ArcGIS Hub: https://hub.arcgis.com/search
 .. _EarthExplorer: https://earthexplorer.usgs.gov/
-
-
-Features
-~~~~~~~~
-
-This project has just been initiated, there are no(t many) features yet.
-
-Features so far:
-
-- computation of several topographic covariates from DEM (curvatures, slope,
-  aspect, radiation angle, ...)
 
 
 Roadmap
