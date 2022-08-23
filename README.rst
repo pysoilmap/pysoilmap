@@ -67,9 +67,11 @@ Google earth:
 
 - earthengine-api_: Google Earth Engine API
 - geemap_: interactive mapping (in jupyter) using Google Earth Engine
+- geedim_: search, compose, and download GEE imagery without size limits
 
 .. _earthengine-api: https://pypi.org/project/earthengine-api/
 .. _geemap: https://pypi.org/project/geemap/
+.. _geedim: https://github.com/dugalh/geedim
 
 Machine learning:
 
